@@ -13,9 +13,9 @@ class enemy():
     #generates the addding questions and returns them in a list that looks like [a, b, answer, "+"]   
     def Adding(self):
         #gets the first number for the adding based on the diff
-        a = random.randrange(0,self.diff*3)
+        a = random.randrange(0,self.diff*2)
         #gets the second number for the adding based on the diff
-        b = random.randrange(0,self.diff*3)
+        b = random.randrange(1,self.diff*2)
         #gets the answer for the question
         answer = a+b
         #saves all the parts of the question on the list they have to be in the order
@@ -27,9 +27,9 @@ class enemy():
     #generates the subbtraction questions and returns them in a list that looks like [a, b, answer, "-"]
     def subbtraction(self):
         #gets the first number for the subbtraction based on the diff
-        a = random.randrange(0,self.diff*3)
+        a = random.randrange(0,self.diff*2)
         #gets the second number for the subbtraction based on the diff
-        b = random.randrange(0,self.diff*3)
+        b = random.randrange(0,self.diff*2)
         #gets the first answer
         answer = a-b
         #check to make sure the answer is postitve than makes the list
@@ -52,7 +52,9 @@ class enemy():
     def multiplication(self):
         #gets a and b for the question based on the diff
         a = random.randrange(1,math.ceil((self.diff/2)))
+        
         b = random.randrange(1,math.ceil((self.diff/2)))
+        
         #gets the answer
         answer = a*b
         #makes the list
@@ -64,14 +66,15 @@ class enemy():
     #makes the division question returns a list [a, b, answer, "/"]
     def division(self):
         #gets a and b and answer for the first time set up so a is more likely to be bigger than b
-        a=random.randrange(0,self.diff*2)
-        b=random.randrange(2,math.ceil(self.diff/2))
-        answer=a/b
+        a=random.randrange(0,(self.diff*2))
+        thing = (math.ceil(self.diff/2))
+        b=random.randrange(2,thing)
+        answer = float(a)/float(b)
         #checks is the answer is divisable by one ia if it is not makes a new a and b till it is
-        while answer%1 != 0:
-            a=random.randrange(0,self.diff)
-            b=random.randrange(2,math.ceil(self.diff/2))
-            answer=a/b
+        while float(answer%1) != 0:
+            a=int(random.randrange(0,(math.ceil(self.diff))))
+            b=int(random.randrange (2,(math.ceil(self.diff/2))))
+            answer=float(a)/float(b)
         #makes the list for the question
         self.question_list.append(a)
         self.question_list.append(b)
@@ -101,20 +104,35 @@ class enemy():
             enemy.division()
         elif question_type == 10:
             enemy.division()
-    
+    def question_check(self):
+        if self.qestion_list == []:
+            enemy.generator() 
+    #displays the question in the middle of the screen for now
+    def question_display(self):
+        global f
+        textFont(f,30)
+        fill(44,22,199)
+        text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100) 
+#sets the difficulty and enemy list and makes the question        
+difficulty=difficulty_setting(15)
+enemy_list=[enemy(difficulty,[])]
+for enemy in enemy_list:
+     enemy.generator()
+            
+def setup():
+    global f
+    size(800,400)
+    background(255)
+    f = createFont("Arial", 30)
+def draw():
+    for enemy in enemy_list:
+       
+        enemy.question_display()
+
+     
+        
        
     
     
-difficulty=difficulty_setting(15)
-enemy1=enemy(difficulty,[])
-enemy_list=[]
-enemy_list.append(enemy1)
-a = 100
-if a > 0:
-    for enemy in enemy_list:
-        print(enemy.division())  
-    a = a-1
-    
 
-
-
+ 
