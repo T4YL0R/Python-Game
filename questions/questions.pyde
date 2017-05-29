@@ -1,5 +1,6 @@
 import random
 import math
+import time
 #funtion to set the difficulty
 def difficulty_setting(a):
     difficulty=a
@@ -27,9 +28,9 @@ class enemy():
     #generates the subbtraction questions and returns them in a list that looks like [a, b, answer, "-"]
     def subbtraction(self):
         #gets the first number for the subbtraction based on the diff
-        a = random.randrange(0,self.diff*2)
+        a = random.randrange(1,self.diff*2)
         #gets the second number for the subbtraction based on the diff
-        b = random.randrange(0,self.diff*2)
+        b = random.randrange(1,self.diff*2)
         #gets the first answer
         answer = a-b
         #check to make sure the answer is postitve than makes the list
@@ -112,10 +113,31 @@ class enemy():
         global f
         textFont(f,30)
         fill(44,22,199)
-        text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100) 
+
+        text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
+    def answer(self):
+        user_answer = 0 #stand in till I get user input working
+        time.sleep(1)
+        if user_answer == self.answer:
+            fill(44,22,199)
+            text("Right", 400,200)
+            enemy_up.remove(enemy_up[0])
+            enemy_up.append(enemy_list[0])
+            enemy_list.remove(enemy_list[0])
+        else:
+            fill(44,22,199)
+            text("Wrong", 400,200)
+            time.sleep(1)
+            enemy_list.append(enemy_up[0])
+            enemy_up.remove(enemy_up[0])
+            enemy_up.append(enemy_list[0])
+            enemy_list.remove(enemy_list[0])
+
+    
 #sets the difficulty and enemy list and makes the question        
 difficulty=difficulty_setting(15)
-enemy_list=[enemy(difficulty,[])]
+enemy_list=[enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[])]
+enemy_up = []
 for enemy in enemy_list:
      enemy.generator()
             
@@ -124,10 +146,14 @@ def setup():
     size(800,400)
     background(255)
     f = createFont("Arial", 30)
+    enemy_up.append(enemy_list[0])
+    enemy_list.remove(enemy_list[0])
 def draw():
-    for enemy in enemy_list:
-       
+    background(255)
+    for enemy in enemy_up:
         enemy.question_display()
+        enemy.answer()
+
 
      
         
