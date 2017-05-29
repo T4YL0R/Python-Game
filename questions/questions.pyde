@@ -116,17 +116,26 @@ class enemy():
 
         text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
     def answer(self):
-        user_answer = 0 #stand in till I get user input working
-        time.sleep(1)
-        if user_answer == self.answer:
+        global user_answer
+
+        real_answer = float(self.question_list[2])
+        real_answer = int(real_answer)
+        print(real_answer)
+        if user_answer == real_answer:
             fill(44,22,199)
             text("Right", 400,200)
+            print("right")            
             enemy_up.remove(enemy_up[0])
-            enemy_up.append(enemy_list[0])
-            enemy_list.remove(enemy_list[0])
+            try:
+                enemy_up.append(enemy_list[0])
+                enemy_list.remove(enemy_list[0])
+            except IndexError:
+                pass
+                 
         else:
             fill(44,22,199)
             text("Wrong", 400,200)
+            print("wrong")
             time.sleep(1)
             enemy_list.append(enemy_up[0])
             enemy_up.remove(enemy_up[0])
@@ -138,6 +147,8 @@ class enemy():
 difficulty=difficulty_setting(15)
 enemy_list=[enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[]),enemy(difficulty,[])]
 enemy_up = []
+userinput = ''
+useranswer = 0
 for enemy in enemy_list:
      enemy.generator()
             
@@ -152,7 +163,23 @@ def draw():
     background(255)
     for enemy in enemy_up:
         enemy.question_display()
+
+
+def keyPressed():
+
+  global userinput
+  global value
+  global user_answer
+  if key == "d":
+    user_answer = int(userinput)
+    for enemy in enemy_up:
         enemy.answer()
+    userinput = ''
+  else:
+    userinput = userinput + key
+    print (userinput)
+
+
 
 
      
