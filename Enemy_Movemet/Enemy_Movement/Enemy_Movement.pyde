@@ -85,7 +85,7 @@ class Enemy():
                 speed = 1
         else:
             speed = 0
-
+'''
 def menus():
     def __init__(self,x,y,state):
         self.x = x
@@ -97,6 +97,7 @@ def menus():
         rect((self.x,self.y + 200,200,100)
         rect((self.x,self.y + 200,200,100)
         text(
+             '''
         
         
             

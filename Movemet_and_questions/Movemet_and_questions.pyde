@@ -125,7 +125,7 @@ class enemy():
         text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
     def answer(self):
         global user_answer
-
+        time.sleep(10)
         real_answer = float(self.question_list[2])
         real_answer = int(real_answer)
         print(real_answer)
@@ -199,6 +199,12 @@ class enemy():
                 speed = 1
         else:
             speed = 0
+    def user_answer(self):
+        self.question_display()
+        
+        time.sleep(10)
+        self.answer()
+        
 class Point():
     def __init__(self,x,y):
         self.x = x
@@ -229,7 +235,7 @@ difficulty=difficulty_setting(15)
 enemy_list=[enemy(difficulty,[],start_point,end_point,2,0,12,250)]
 enemy_up = []
 userinput = ''
-useranswer = 0
+user_answer = 0
 for enemy in enemy_list:
      enemy.generator()
             
@@ -243,8 +249,10 @@ def setup():
     ellipseMode(CENTER)
 def draw():
     background(255)
+
     for enemy in enemy_up:
         enemy.question_display()
+        enemy.answer()
     fill(170)
     rect(750,400,1500,400)
     player.place()
@@ -260,14 +268,15 @@ def keyPressed():
   global user_answer
   if key == "d":
     user_answer = int(userinput)
-    for enemy in enemy_up:
-        enemy.answer()
     userinput = ''
   else:
     userinput = userinput + key
     print (userinput)
 
-
+def mouseClicked():
+    for enemy in enemy_list:
+        if mouseX >= enemy.x and mouseX <= enemy.x+17.5 and mouseY >= enemy.y and mouseY <= enemy.y+17.5:
+            enemy.user_answer()
 
      
         
