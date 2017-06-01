@@ -1,6 +1,7 @@
 import random
 import math
 import time
+from timeit import default_timer as timer
 #funtion to set the difficulty
 def difficulty_setting(a):
     difficulty=a
@@ -125,7 +126,7 @@ class enemy():
         text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
     def answer(self):
         global user_answer
-        time.sleep(10)
+
         real_answer = float(self.question_list[2])
         real_answer = int(real_answer)
         print(real_answer)
@@ -199,11 +200,9 @@ class enemy():
                 speed = 1
         else:
             speed = 0
-    def user_answer(self):
-        self.question_display()
+
         
-        time.sleep(10)
-        self.answer()
+        
         
 class Point():
     def __init__(self,x,y):
@@ -275,8 +274,14 @@ def keyPressed():
 
 def mouseClicked():
     for enemy in enemy_list:
-        if mouseX >= enemy.x and mouseX <= enemy.x+17.5 and mouseY >= enemy.y and mouseY <= enemy.y+17.5:
-            enemy.user_answer()
+        if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
+           enemy.question_display()
+           goal_time = timer()
+           real_time = timer()
+           while real_time <= goal_time+10:
+               real_time = timer()
+           enemy.answer()
+           time.sleep(1)
 
      
         
