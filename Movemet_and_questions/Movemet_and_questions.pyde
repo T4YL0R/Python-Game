@@ -9,7 +9,7 @@ def difficulty_setting(a):
 #base enemy class
 class enemy(): 
     #diif is just the difficulty and question_list is where the qestion list is saved
-    def __init__(self, diff, question_list, cpos, tpos, speed, colour1, colour2, colour3 ):
+    def __init__(self, diff, question_list, cpos, tpos, speed, colour1, colour2, colour3, right):
         self.diff = diff 
         self.question_list = question_list
         self.x = cpos.x
@@ -18,6 +18,7 @@ class enemy():
         self.ty = tpos.y
         self.speed = speed
         self.listc = [colour1,colour2,colour3]
+        self.right = 0
         if (speed < 1):
             self.type = str(speed) + "fast"
         else:
@@ -126,30 +127,27 @@ class enemy():
         text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
     def answer(self):
         global user_answer
-
         real_answer = float(self.question_list[2])
         real_answer = int(real_answer)
-        print(real_answer)
-        if user_answer == real_answer:
+        try:
+            int(userinput)
+        except valueError:
+            text("next time enter a letter")
+            time.sleep(1)
+        if float(userinput) == real_answer:
             fill(44,22,199)
-            text("Right", 400,200)
-            print("right")            
+            text("Right", 400,500)
+            print("right")  
+            self.right = 1
+            time.sleep(1)          
             enemy_up.remove(enemy_up[0])
-            try:
-                enemy_up.append(enemy_list[0])
-                enemy_list.remove(enemy_list[0])
-            except IndexError:
-                pass
-                 
+                   
         else:
             fill(44,22,199)
-            text("Wrong", 400,200)
+            text("Wrong", 400,500)
             print("wrong")
             time.sleep(1)
-            enemy_list.append(enemy_up[0])
             enemy_up.remove(enemy_up[0])
-            enemy_up.append(enemy_list[0])
-            enemy_list.remove(enemy_list[0])
     def placeEnemy(self):
         fill(0)
         ellipse(self.x,self.y,35,35)
@@ -231,10 +229,12 @@ player = Player(750,400,3)
 start_point = Point(1,400)
 end_point = Point(1000,400)     
 difficulty=difficulty_setting(15)
-enemy_list=[enemy(difficulty,[],start_point,end_point,2,0,12,250)]
+enemy_list=[enemy(difficulty,[],start_point,end_point,2,0,12,250,0)]
 enemy_up = []
 userinput = ''
+real_time = time()
 user_answer = 0
+goal_time = 0
 for enemy in enemy_list:
      enemy.generator()
             
@@ -247,11 +247,19 @@ def setup():
     rectMode(CENTER)
     ellipseMode(CENTER)
 def draw():
+    global goal_time
     background(255)
-
+    real_time = timer()
+    textFont(f,30)
+    text(userinput, 400,400)
     for enemy in enemy_up:
         enemy.question_display()
-        enemy.answer()
+        if real_time >= goal_time:        
+            enemy.answer()
+            time.sleep(2)
+    for enemy in enemy_list:
+        if enemy.right == 1:
+            enemy_list.remove(enemy)
     fill(170)
     rect(750,400,1500,400)
     player.place()
@@ -265,24 +273,20 @@ def keyPressed():
   global userinput
   global value
   global user_answer
-  if key == "d":
-    user_answer = int(userinput)
+  if key == "c":
     userinput = ''
   else:
     userinput = userinput + key
     print (userinput)
 
 def mouseClicked():
+    global goal_time
     for enemy in enemy_list:
         if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
-           enemy.question_display()
-           goal_time = timer()
-           real_time = timer()
-           while real_time <= goal_time+10:
-               real_time = timer()
-           enemy.answer()
-           time.sleep(1)
-
+            enemy_up.append(enemy)
+            goal_time = (timer()+10)
+            
+    
      
         
        
