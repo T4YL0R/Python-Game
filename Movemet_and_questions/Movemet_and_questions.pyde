@@ -229,13 +229,15 @@ player = Player(750,400,3)
 start_point = Point(1,400)
 end_point = Point(1000,400)     
 difficulty=difficulty_setting(15)
-enemy_list=[enemy(difficulty,[],start_point,end_point,2,0,12,250,0)]
+enemy_start_list= [enemy(difficulty,[],start_point,end_point,2,0,12,250,0)]
+enemy_list=[]
 enemy_up = []
 userinput = ''
 real_time = time()
 user_answer = 0
 goal_time = 0
-for enemy in enemy_list:
+start_time = 0
+for enemy in enemy_start_list:
      enemy.generator()
             
 def setup():
@@ -248,10 +250,14 @@ def setup():
     ellipseMode(CENTER)
 def draw():
     global goal_time
+    global start_time
     background(255)
     real_time = timer()
     textFont(f,30)
     text(userinput, 400,400)
+    if start_time+3 <= real_time:
+        enemy_list.append(enemy_start_list[0])
+        enemy_start_list.remove(enemy_start_list[0])
     for enemy in enemy_up:
         enemy.question_display()
         if real_time >= goal_time:        
