@@ -7,7 +7,7 @@ def difficulty_setting(a):
     difficulty=a
     return difficulty 
 #base enemy class
-class enemy(): 
+class Enemy(): 
     #diif is just the difficulty and question_list is where the qestion list is saved
     def __init__(self, diff, question_list, cpos, tpos, speed, colour1, colour2, colour3, right):
         self.diff = diff 
@@ -127,14 +127,16 @@ class enemy():
         text(str(self.question_list[0]) + " " + str(self.question_list[3]) + " " + str(self.question_list[1]) + " " + "= ", 350, 100)
     def answer(self):
         global user_answer
+        global userinput
         real_answer = float(self.question_list[2])
         real_answer = int(real_answer)
         try:
             int(userinput)
-        except valueError:
-            text("next time enter a letter")
+            userinput = float(userinput)
+        except ValueError:
+            text("next time enter a letter", 400,500)
             time.sleep(1)
-        if float(userinput) == real_answer:
+        if userinput == real_answer:
             fill(44,22,199)
             text("Right", 400,500)
             print("right")  
@@ -191,13 +193,13 @@ class enemy():
                 self.ty = (pointsList[i + 1].y)
     
     def pause(self):
-        if (ed == 0):
+        if (self.speed == 0):
             if ("fast" in typ):
-                speed = int(typ[0])
+                self.speed = int(typ[0])
             else:
-                speed = 1
+                self.speed = 1
         else:
-            speed = 0
+            self.speed = 0
 
         
         
@@ -229,16 +231,15 @@ player = Player(750,400,3)
 start_point = Point(1,400)
 end_point = Point(1000,400)     
 difficulty=difficulty_setting(15)
-enemy_start_list= [enemy(difficulty,[],start_point,end_point,2,0,12,250,0)]
-enemy_list=[]
+
+enemy_list=[Enemy(difficulty,[],start_point,end_point,2,0,12,250,0)]
 enemy_up = []
 userinput = ''
 real_time = time()
 user_answer = 0
 goal_time = 0
 start_time = 0
-for enemy in enemy_start_list:
-     enemy.generator()
+
             
 def setup():
     global f
@@ -251,21 +252,29 @@ def setup():
 def draw():
     global goal_time
     global start_time
+    global enemy
     background(255)
     real_time = timer()
     textFont(f,30)
     text(userinput, 400,400)
-    if start_time+3 <= real_time:
-        enemy_list.append(enemy_start_list[0])
-        enemy_start_list.remove(enemy_start_list[0])
+    #this is causeing the error
+    if start_time+2 <= real_time:
+        enemy_list.append(Enemy(difficulty,[],start_point,end_point,2,0,12,250,0))
+        start_time = timer()
     for enemy in enemy_up:
         enemy.question_display()
         if real_time >= goal_time:        
             enemy.answer()
-            time.sleep(2)
+            unerinput = ""
+            time.sleep(1)
+            for enemy in enemy_list:
+                enemy.pause()
     for enemy in enemy_list:
         if enemy.right == 1:
             enemy_list.remove(enemy)
+    for enemy in enemy_list:
+        if enemy.question_list == []:
+            enemy.generator()
     fill(170)
     rect(750,400,1500,400)
     player.place()
@@ -291,6 +300,7 @@ def mouseClicked():
         if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
             enemy_up.append(enemy)
             goal_time = (timer()+10)
+            enemy.pause()
             
     
      
