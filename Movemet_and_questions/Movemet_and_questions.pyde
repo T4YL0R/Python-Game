@@ -131,7 +131,8 @@ class Enemy():
             userinput = float(userinput)
         except ValueError:
             text("next time enter a letter", 400,150)
-            time.sleep(2) 
+            player.wrong = 2
+            wrong_time = timer()
         if userinput == real_answer:
             fill(44,22,199)
             text("Right", 400,150)
@@ -142,9 +143,11 @@ class Enemy():
                    
         else:
             fill(44,22,199)
+            player.wrong = 2
             text("Wrong", 400,500)
             print("wrong")
-            time.sleep(2) 
+            
+            wrong_time = timer()
             enemy_up.remove(enemy_up[0])
     def placeEnemy(self):
         fill(0)
@@ -157,10 +160,8 @@ class Enemy():
         atX = False
         atY = False
         moveX = self.tx-self.x
-        print(str(self.tx) + "-" + str(self.x) + "=" +str(moveX))
         moveY = self.ty-self.y
-        print(str(self.ty) + "-" + str(self.y) + "=" +str(moveX))
-        print(str(moveX))
+   
         if(moveY == 0):
             shiftX = 1
             shiftY = 0
@@ -169,7 +170,6 @@ class Enemy():
             shiftX = 0
         else:
             shiftY = moveY/moveX
-            print("Before: " + str(self.x))
         self.x = self.x + (shiftX*self.speed)
         print(str(self.x))
         self.y = self.y + (shiftY*self.speed)
@@ -207,10 +207,12 @@ class Point():
         fill(0)
         ellipse(self.x,self.y,4,4)
 class Player():
-    def __init__(self,xl,yl,hpl):
+    def __init__(self,xl,yl,hpl, dead , wrong):
         self.x = xl
         self.y = yl
-        hp = hpl
+        self.hp = hpl
+        self.dead = dead
+        self.wrong = wrong
     def place(self):
         fill(0)
         ellipse(self.x,self.y,60,60)
@@ -220,9 +222,9 @@ class Player():
         triangle(self.x,self.y-30,self.x-25,self.y+15,self.x+25,self.y+15)
     
 #sets the difficulty and enemy list and makes the question  
-player = Player(750,400,3)
+player = Player(1200,400,3,0 , 0)
 start_point = Point(1,400)
-end_point = Point(1000,400)     
+end_point = Point(1300,400)     
 difficulty=difficulty_setting(15)
 
 enemy_list=[]
@@ -233,6 +235,9 @@ user_answer = 0
 goal_time = 0
 start_time = 0
 paused = 0
+dead = 0
+wrong_time = 0
+
 
             
 def setup():
@@ -249,14 +254,32 @@ def draw():
     global enemy
     global paused
     global userinput
+    global dead
+    global wrong_time
+    global wrong
     background(255)
     real_time = timer()
+
     textFont(f,30)
     text(userinput, 500,100)
-    if start_time <= real_time:
+    for enemy in enemy_list:
+        if enemy.x > 1200:
+            player.hp = player.hp - 1
+            enemy_list.remove(enemy)
+            
+    if player.hp < 1:
+        if dead == 0:
+            for enemy in enemy_list:
+                enemy.pause()
+            paused = 10
+            dead = 1
+
+    if start_time+1 <= real_time:
         if paused == 0:
             enemy_list.append(Enemy(difficulty,[],start_point,end_point,1,0,12,250,0))
             start_time = timer()+1
+            player.wrong -= 1
+
     
         
     for enemy in enemy_up:
@@ -266,7 +289,9 @@ def draw():
             userinput = ''
             for enemy in enemy_list:
                 enemy.pause()
-                paused = 0
+                if paused == 1:
+                    paused = paused-1
+            start_time = timer()
     for enemy in enemy_list:
         if enemy.right == 1:
             enemy_list.remove(enemy)
@@ -276,10 +301,28 @@ def draw():
     
     fill(170)
     rect(750,400,1500,400)
+    '''
+    if player.wrong == 1:
+        if wrong_time > real_time:
+            
+            player.wrong = 0
+            wrong_time = 0
+            rect(100,100,200,200)'''
     player.place()
     for i in range(len(enemy_list)):
         enemy_list[i].move()
         enemy_list[i].placeEnemy()
+    if dead == 1:
+        textFont(f,60)
+        text("you died", 400,500)
+    textFont(f,30)
+    text(str(player.hp)+" lives", 1000, 100)
+    if player.wrong >= 0:
+        text(str(player.wrong)+" wrong" , 100,100)
+
+    text("press c to clear answer", 100,750)
+    
+        
 
 
 def keyPressed():
@@ -296,13 +339,16 @@ def keyPressed():
 def mouseClicked():
     global goal_time
     global paused
+    global dead
+    global wrong
     for enemy in enemy_list:
         if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
-            enemy_up.append(enemy)
-            goal_time = (timer()+5)
-            for enemy in enemy_list:
-                enemy.pause()
-                paused = 1
+            if dead == 0 and paused == 0 and player.wrong < 1:
+                enemy_up.append(enemy)
+                goal_time = (timer()+5)
+                for enemy in enemy_list:
+                    enemy.pause()
+                    paused = 1
             
     
      
