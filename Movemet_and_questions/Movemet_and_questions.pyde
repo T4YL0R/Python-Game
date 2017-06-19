@@ -91,27 +91,16 @@ class Enemy():
         return self.question_list
     #picks a radom number and based on the number makes a certan type of question          
     def generator(self):
-        question_type = random.randrange(1,11)
-        if question_type == 1:
-            enemy.Adding()
-        elif question_type == 2:
-            enemy.Adding()
-        elif question_type == 3:
-            enemy.Adding()
-        elif question_type == 4:
+        question_type = random.randrange(1,5)
+        if question_type == 1 and ad == True:
+            enemy.Adding()       
+        elif question_type == 2 and su == True:
             enemy.subbtraction()
-        elif question_type == 5:
-            enemy.subbtraction()
-        elif question_type == 6:
-            enemy.subbtraction()
-        elif question_type == 7:
+        elif question_type == 3 and mu == True:
             enemy.multiplication()
-        elif question_type == 8:
-            enemy.multiplication()
-        elif question_type == 9:
+        elif question_type == 4 and di == True:
             enemy.division()
-        elif question_type == 10:
-            enemy.division()
+
     def question_check(self):
         if self.qestion_list == []:
             enemy.generator() 
@@ -124,6 +113,7 @@ class Enemy():
     def answer(self):
         global user_answer
         global userinput
+        global kills
         real_answer = float(self.question_list[2])
         real_answer = int(real_answer)
         try:
@@ -140,6 +130,7 @@ class Enemy():
             time.sleep(2) 
             self.right = 1        
             enemy_up.remove(enemy_up[0])
+            kills += 1
                    
         else:
             fill(44,22,199)
@@ -237,6 +228,9 @@ start_time = 0
 paused = 0
 dead = 0
 wrong_time = 0
+kills = 0 
+win = 0
+kills_to_win = 5
 
 
             
@@ -257,6 +251,8 @@ def draw():
     global dead
     global wrong_time
     global wrong
+    global kills
+    global win
     background(255)
     real_time = timer()
 
@@ -301,13 +297,12 @@ def draw():
     
     fill(170)
     rect(750,400,1500,400)
-    '''
-    if player.wrong == 1:
-        if wrong_time > real_time:
-            
-            player.wrong = 0
-            wrong_time = 0
-            rect(100,100,200,200)'''
+    if kills >= kills_to_win:
+        if win == 0:
+            for enemy in enemy_list:
+                enemy.pause()
+            paused = 10
+            win = 1
     player.place()
     for i in range(len(enemy_list)):
         enemy_list[i].move()
@@ -319,8 +314,11 @@ def draw():
     text(str(player.hp)+" lives", 1000, 100)
     if player.wrong >= 0:
         text(str(player.wrong)+" wrong" , 100,100)
+    text(str(kills)+" Kills", 800,750)
 
     text("press c to clear answer", 100,750)
+    if win == 1:
+        text("You Win", 400,500)
     
         
 
