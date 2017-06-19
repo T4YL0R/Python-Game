@@ -33,6 +33,25 @@ def printMenu():
         text("Divison: " + str(di),x-600,y-280)
         text("Multiplacation: " + str(mu),x-600,y-220)
         text("Difficulty: " + str(diff),x-600,y-160)
+    elif menu_state == 1:
+        textSize(120)
+        fill(0)
+        text("Game Paused",x/4,y/4)
+        fill(175)
+        rect(x - 750,y - 500,300,60)
+        rect(x- 750,y - 400,300,60)
+        rect(x- 750,y - 300,300,60)
+        fill(0)
+        textSize(60)
+        text("Resume",x-850,y - 480)
+        text("Restart",x-850,y - 380)
+        text("Exit",x-820,y - 280)
+    elif menu_state == 2:
+        fill(100)
+        rect(1460,20,40,40)
+        fill(250)
+        rect(1465,20,5,25)
+        rect(1455,20,5,25)
 def draw():
     background(251)
     printMenu()
@@ -64,41 +83,55 @@ def mouseClicked():
     global di
     global mu
     global diff
-    if (mouseX > 182.5 and mouseX < 357 and mouseY > 235 and mouseY < 315):
-        print("Play")
-        menu_state = 1
-        
-        
-    elif (mouseX > 200 and mouseX < 400 and mouseY > 335 and mouseY < 415):
-        print("Endless")
-    elif (mouseX > 170 and mouseX < 370 and mouseY > 435 and mouseY < 515):
-        print("Exit")
-    elif (mouseX >  900 and mouseX < 1300 and mouseY > 345 and mouseY < 405):
-        if (ad == True):
-            ad = False
-        else:
-            ad = True
-    elif (mouseX >  950 and mouseX < 1350 and mouseY > 405 and mouseY < 465):
-        if (su == True):
-            su = False
-        else:
-            su = True
-    elif (mouseX > 850 and mouseX < 1350 and mouseY > 465 and mouseY < 525):
-        if ( di == True):
-            di = False
-        else:
-            di = True
-    elif (mouseX > 900 and mouseX < 1300 and mouseY > 525 and mouseY < 585):
-        if (mu == True):
-            mu = False
-        else:
-            mu = True
-    elif (mouseX > 820 and mouseX < 1220 and mouseY > 585 and mouseY < 645):
-        if mouseX > 1070:
-            diff += 1
-        else:
-            diff -= 1
-        if diff < 0:
-            diff = 0
-        if diff > 15:
-            diff = 15
+    if menu_state == 0:
+        if (mouseX > 182.5 and mouseX < 357 and mouseY > 235 and mouseY < 315):
+            print("Play")
+            menu_state = 2
+            
+            
+        elif (mouseX > 200 and mouseX < 400 and mouseY > 335 and mouseY < 415):
+            print("Endless")
+        elif (mouseX > 170 and mouseX < 370 and mouseY > 435 and mouseY < 515):
+            print("Exit")
+        elif (mouseX >  900 and mouseX < 1300 and mouseY > 345 and mouseY < 405):
+            if (ad == True):
+                ad = False
+            else:
+                ad = True
+        elif (mouseX >  950 and mouseX < 1350 and mouseY > 405 and mouseY < 465):
+            if (su == True):
+                su = False
+            else:
+                su = True
+        elif (mouseX > 850 and mouseX < 1350 and mouseY > 465 and mouseY < 525):
+            if ( di == True):
+                di = False
+            else:
+                di = True
+        elif (mouseX > 900 and mouseX < 1300 and mouseY > 525 and mouseY < 585):
+            if (mu == True):
+                mu = False
+            else:
+                mu = True
+        elif (mouseX > 820 and mouseX < 1220 and mouseY > 585 and mouseY < 645):
+            if mouseX > 1070:
+                diff += 1
+            else:
+                diff -= 1
+            if diff < 0:
+                diff = 0
+            if diff > 15:
+                diff = 15
+    elif menu_state == 1:
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 440 and mouseY < 560):
+            print("Exit")
+            menu_state = 0
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 340 and mouseY < 460):
+            print("Restart")
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 240 and mouseY < 360):
+            menu_state = 2
+    elif (menu_state == 2):
+        if mouseX > 1440 and mouseY <60:
+            menu_state = 1
+            
+
