@@ -2,6 +2,7 @@ import random
 import math
 import time
 from timeit import default_timer as timer
+
 #funtion to set the difficulty
 def difficulty_setting(a):
     difficulty=a
@@ -211,12 +212,59 @@ class Player():
         ellipse(self.x,self.y,50,50)
         fill(164)
         triangle(self.x,self.y-30,self.x-25,self.y+15,self.x+25,self.y+15)
+def printMenu():
+    if (menu_state == 0):
+        fill(150)
+        rect(x-1230,y-525,175,80)#Play
+        rect(x-1100,y-425,400,80)#Endless
+        rect(x-1230,y-325,200,80)#Exit
+        rect(x-475,y-525,250,60)#Settings
+        rect(x-400,y-425,400,60)#Add
+        rect(x-350,y-365,500,60)#Sub
+        rect(x-400,y-305,400,60)#Div
+        rect(x-300,y-245,600,60)#Mul
+        rect(x-430,y-185,350,60)#Diff
+        textSize(120)
+        fill(0)
+        text("The Math Game",x-1450,y-600)
+        textSize(72)
+        fill(32,175,57)
+        text("Play",x-1300,y-500)
+        fill(0)
+        textSize(60)
+        text("Endless Mode",x-1300,y-400)
+        text("Exit",x-1300,y-300)
+        text("Settings",x-600,y-500)
+        text("Additon: " + str(ad),x-600,y-400)
+        text("Subtraction: " + str(su),x-600,y-340)
+        text("Divison: " + str(di),x-600,y-280)
+        text("Multiplacation: " + str(mu),x-600,y-220)
+        text("Difficulty: " + str(diff),x-600,y-160)
+    elif menu_state == 1:
+        textSize(120)
+        fill(0)
+        text("Game Paused",x/4,y/4)
+        fill(175)
+        rect(x - 750,y - 500,300,60)
+        rect(x- 750,y - 400,300,60)
+        rect(x- 750,y - 300,300,60)
+        fill(0)
+        textSize(60)
+        text("Resume",x-850,y - 480)
+        text("Restart",x-850,y - 380)
+        text("Exit",x-820,y - 280)
+    elif menu_state == 2:
+        fill(100)
+        rect(1460,20,40,40)
+        fill(250)
+        rect(1465,20,5,25)
+        rect(1455,20,5,25)
     
 #sets the difficulty and enemy list and makes the question  
 player = Player(1200,400,3,0 , 0)
 start_point = Point(1,400)
 end_point = Point(1300,400)     
-difficulty=difficulty_setting(15)
+
 
 enemy_list=[]
 enemy_up = []
@@ -230,7 +278,26 @@ dead = 0
 wrong_time = 0
 kills = 0 
 win = 0
-kills_to_win = 5
+kills_to_win = 30
+global menu_state
+global x
+global y
+global ad
+global su
+global di
+global mu 
+global ad
+global diff
+ad = True
+su = True
+di = True
+mu = True
+diff = 6
+difficulty= diff
+x = 1500
+y = 800
+menu_state = 0
+#menu state 0 is main menu 1 is paused menu 2 is  
 
 
             
@@ -243,6 +310,15 @@ def setup():
     rectMode(CENTER)
     ellipseMode(CENTER)
 def draw():
+    global menu_state
+    global x
+    global y
+    global ad
+    global su
+    global di
+    global mu 
+    global ad
+    global diff
     global goal_time
     global start_time
     global enemy
@@ -253,102 +329,163 @@ def draw():
     global wrong
     global kills
     global win
+    difficulty = diff
     background(255)
+
     real_time = timer()
-
-    textFont(f,30)
-    text(userinput, 500,100)
-    for enemy in enemy_list:
-        if enemy.x > 1200:
-            player.hp = player.hp - 1
-            enemy_list.remove(enemy)
+    printMenu()
+    
+    if menu_state == 2:
+        fill(0,0,255)
+        textFont(f,30)
+        text(userinput, 500,100)
+        for enemy in enemy_list:
+            if enemy.x > 1200:
+                player.hp = player.hp - 1
+                enemy_list.remove(enemy)
             
-    if player.hp < 1:
-        if dead == 0:
-            for enemy in enemy_list:
-                enemy.pause()
-            paused = 10
-            dead = 1
+        if player.hp < 1:
+            if dead == 0:
+                for enemy in enemy_list:
+                    enemy.pause()
+                paused = 10
+                dead = 1
 
-    if start_time+1 <= real_time:
-        if paused == 0:
-            enemy_list.append(Enemy(difficulty,[],start_point,end_point,1,0,12,250,0))
-            start_time = timer()+1
-            player.wrong -= 1
+        if start_time+1 <= real_time:
+            if paused == 0:
+                enemy_list.append(Enemy(difficulty,[],start_point,end_point,1,0,12,250,0))
+                start_time = timer()+1
+                player.wrong -= 1
 
     
         
-    for enemy in enemy_up:
-        enemy.question_display()
-        if real_time >= goal_time:        
-            enemy.answer()
-            userinput = ''
-            for enemy in enemy_list:
-                enemy.pause()
-                if paused == 1:
-                    paused = paused-1
-            start_time = timer()
-    for enemy in enemy_list:
-        if enemy.right == 1:
-            enemy_list.remove(enemy)
-    for enemy in enemy_list:
-        if enemy.question_list == []:
-            enemy.generator()
+        for enemy in enemy_up:
+            enemy.question_display()
+            if real_time >= goal_time:        
+                enemy.answer()
+                userinput = ''
+                for enemy in enemy_list:
+                    enemy.pause()
+                    if paused == 1:
+                        paused = paused-1
+                start_time = timer()
+        for enemy in enemy_list:
+            if enemy.right == 1:
+                enemy_list.remove(enemy)
+        for enemy in enemy_list:
+            if enemy.question_list == []:
+                enemy.generator()
+        
+        fill(170)
+        rect(750,400,1500,400)
+        if kills >= kills_to_win:
+            if win == 0:
+                for enemy in enemy_list:
+                    enemy.pause()
+                paused = 10
+                win = 1
+        player.place()
+        for i in range(len(enemy_list)):
+            enemy_list[i].move()
+            enemy_list[i].placeEnemy()
+        if dead == 1:
+            textFont(f,60)
+            text("you died", 400,500)
+        textFont(f,30)
+        text(str(player.hp)+" lives", 1000, 100)
+        if player.wrong >= 0:
+            text(str(player.wrong)+" wrong" , 100,100)
+        text(str(kills)+" Kills", 800,750)
     
-    fill(170)
-    rect(750,400,1500,400)
-    if kills >= kills_to_win:
-        if win == 0:
-            for enemy in enemy_list:
-                enemy.pause()
-            paused = 10
-            win = 1
-    player.place()
-    for i in range(len(enemy_list)):
-        enemy_list[i].move()
-        enemy_list[i].placeEnemy()
-    if dead == 1:
-        textFont(f,60)
-        text("you died", 400,500)
-    textFont(f,30)
-    text(str(player.hp)+" lives", 1000, 100)
-    if player.wrong >= 0:
-        text(str(player.wrong)+" wrong" , 100,100)
-    text(str(kills)+" Kills", 800,750)
-
-    text("press c to clear answer", 100,750)
-    if win == 1:
-        text("You Win", 400,500)
+        text("press c to clear answer", 100,750)
+        if win == 1:
+            text("You Win", 400,500)
     
         
 
 
 def keyPressed():
-
+  
   global userinput
   global value
   global user_answer
-  if key == "c":
-    userinput = ''
-  else:
-    userinput = userinput + key
-    print (userinput)
+  if menu_state == 2:
+    if key == "c":
+        userinput = ''
+    else:
+        userinput = userinput + key
+        print (userinput)
 
 def mouseClicked():
     global goal_time
     global paused
     global dead
     global wrong
-    for enemy in enemy_list:
-        if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
-            if dead == 0 and paused == 0 and player.wrong < 1:
-                enemy_up.append(enemy)
-                goal_time = (timer()+5)
-                for enemy in enemy_list:
-                    enemy.pause()
-                    paused = 1
+    global menu_state
+    global ad
+    global su
+    global di
+    global mu
+    global diff
+    if menu_state == 2:
+        for enemy in enemy_list:
+            if mouseX >= enemy.x-17.5 and mouseX <= enemy.x+17.5 and mouseY >= enemy.y-17.5 and mouseY <= enemy.y+17.5:
+                if dead == 0 and paused == 0 and player.wrong < 1:
+                    enemy_up.append(enemy)
+                    goal_time = (timer()+5)
+                    for enemy in enemy_list:
+                        enemy.pause()
+                        paused = 1
             
-    
+    if menu_state == 0:
+        if (mouseX > 182.5 and mouseX < 357 and mouseY > 235 and mouseY < 315):
+            print("Play")
+            menu_state = 2
+            
+            
+        elif (mouseX > 200 and mouseX < 400 and mouseY > 335 and mouseY < 415):
+            kills_to_win = 1000000
+        elif (mouseX > 170 and mouseX < 370 and mouseY > 435 and mouseY < 515):
+            print("Exit")
+        elif (mouseX >  900 and mouseX < 1300 and mouseY > 345 and mouseY < 405):
+            if (ad == True):
+                ad = False
+            else:
+                ad = True
+        elif (mouseX >  950 and mouseX < 1350 and mouseY > 405 and mouseY < 465):
+            if (su == True):
+                su = False
+            else:
+                su = True
+        elif (mouseX > 850 and mouseX < 1350 and mouseY > 465 and mouseY < 525):
+            if ( di == True):
+                di = False
+            else:
+                di = True
+        elif (mouseX > 900 and mouseX < 1300 and mouseY > 525 and mouseY < 585):
+            if (mu == True):
+                mu = False
+            else:
+                mu = True
+        elif (mouseX > 820 and mouseX < 1220 and mouseY > 585 and mouseY < 645):
+            if mouseX > 1070:
+                diff += 1
+            else:
+                diff -= 1
+            if diff < 5:
+                diff = 5
+            
+    elif menu_state == 1:
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 440 and mouseY < 560):
+            print("Exit")
+            menu_state = 0
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 340 and mouseY < 460):
+            print("Restart")
+        if (mouseX > 450 and mouseX < 1050 and mouseY > 240 and mouseY < 360):
+            menu_state = 2
+    elif (menu_state == 2):
+        if mouseX > 1440 and mouseY <60:
+            menu_state = 1
      
         
        
